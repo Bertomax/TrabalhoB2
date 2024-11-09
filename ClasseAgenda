@@ -1,0 +1,45 @@
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class Agenda {
+    private List<Contato> contatos;
+
+    public Agenda() {
+        this.contatos = new ArrayList<>();
+    }
+
+    // Create
+    public void adicionarContato(Contato contato) {
+        contatos.add(contato);
+    }
+
+    // Read
+    public List<Contato> listarContatos() {
+        return contatos;
+    }
+
+    public Optional<Contato> buscarContato(String nome) {
+        return contatos.stream().filter(c -> c.getNome().equalsIgnoreCase(nome)).findFirst();
+    }
+
+    // Update
+    public boolean atualizarContato(String nome, Contato contatoAtualizado) {
+        Optional<Contato> contatoOptional = buscarContato(nome);
+        if (contatoOptional.isPresent()) {
+            Contato contato = contatoOptional.get();
+            contato.setNome(contatoAtualizado.getNome());
+            contato.setTelefone(contatoAtualizado.getTelefone());
+            contato.setEmail(contatoAtualizado.getEmail());
+            return true;
+        }
+        return false;
+    }
+
+    // Delete
+    public boolean removerContato(String nome) {
+        return contatos.removeIf(c -> c.getNome().equalsIgnoreCase(nome));
+    }
+}
+
