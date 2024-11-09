@@ -1,0 +1,110 @@
+
+import java.util.Scanner;
+
+public class ConsoleApp {
+
+    private static Scanner scanner = new Scanner(System.in);
+    private static Agenda agenda = new Agenda();
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("Agenda de Contatos:");
+            System.out.println("1. Adicionar Contato");
+            System.out.println("2. Listar Contatos");
+            System.out.println("3. Buscar Contato");
+            System.out.println("4. Atualizar Contato");
+            System.out.println("5. Remover Contato");
+            System.out.println("6. Sair");
+
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1:
+                    adicionarContato();
+                    break;
+                case 2:
+                    listarContatos();
+                    break;
+                case 3:
+                    buscarContato();
+                    break;
+                case 4:
+                    atualizarContato();
+                    break;
+                case 5:
+                    removerContato();
+                    break;
+                case 6:
+                    System.out.println("Saindo...");
+                    System.exit(0);
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+
+    private static void adicionarContato() {
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        Contato contato = new Contato(nome, telefone, email);
+        agenda.adicionarContato(contato);
+        System.out.println("Contato adicionado com sucesso!");
+    }
+
+    private static void listarContatos() {
+        System.out.println("Lista de contatos:");
+        for (Contato contato : agenda.listarContatos()) {
+            System.out.println(contato);
+        }
+    }
+
+    private static void buscarContato() {
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        Contato contato = agenda.buscarContato(nome).orElse(null);
+        if (contato != null) {
+            System.out.println(contato);
+        } else {
+            System.out.println("Contato não encontrado.");
+        }
+    }
+
+    private static void atualizarContato() {
+        System.out.print("Nome do contato a ser atualizado: ");
+        String nome = scanner.nextLine();
+
+        System.out.print("Novo Nome: ");
+        String novoNome = scanner.nextLine();
+        System.out.print("Novo Telefone: ");
+        String novoTelefone = scanner.nextLine();
+        System.out.print("Novo Email: ");
+        String novoEmail = scanner.nextLine();
+
+        Contato contatoAtualizado = new Contato(novoNome, novoTelefone, novoEmail);
+        boolean atualizado = agenda.atualizarContato(nome, contatoAtualizado);
+
+        if (atualizado) {
+            System.out.println("Contato atualizado com sucesso!");
+        } else {
+            System.out.println("Contato não encontrado.");
+        }
+    }
+
+    private static void removerContato() {
+        System.out.print("Nome do contato a ser removido: ");
+        String nome = scanner.nextLine();
+        boolean removido = agenda.removerContato(nome);
+
+        if (removido) {
+            System.out.println("Contato removido com sucesso!");
+        } else {
+            System.out.println("Contato não encontrado.");
+        }
+    }
+}
+
