@@ -1,0 +1,138 @@
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class AgendaSwingApp {
+    private JFrame frame;
+    private JTextField nomeField;
+    private JTextField telefoneField;
+    private JTextField emailField;
+    private JTextArea displayArea;
+    private Agenda agenda;
+
+    public AgendaSwingApp() {
+        agenda = new Agenda();
+        frame = new JFrame("Agenda de Contatos");
+
+        // Configurar campos de texto
+        nomeField = new JTextField(20);
+        telefoneField = new JTextField(20);
+        emailField = new JTextField(20);
+
+        // Configurar área de exibição
+        displayArea = new JTextArea(10, 30);
+        displayArea.setEditable(false);
+
+        // Configurar botões
+        JButton addButton = new JButton("Adicionar Contato");
+        JButton listButton = new JButton("Listar Contatos");
+        JButton searchButton = new JButton("Buscar Contato");
+        JButton updateButton = new JButton("Atualizar Contato");
+        JButton deleteButton = new JButton("Remover Contato");
+
+        // Adicionar listeners aos botões
+        addButton.addActionListener(new AddButtonListener());
+        listButton.addActionListener(new ListButtonListener());
+        searchButton.addActionListener(new SearchButtonListener());
+        updateButton.addActionListener(new UpdateButtonListener());
+        deleteButton.addActionListener(new DeleteButtonListener());
+
+        // Configurar o layout
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2));
+        inputPanel.add(new JLabel("Nome:"));
+        inputPanel.add(nomeField);
+        inputPanel.add(new JLabel("Telefone:"));
+        inputPanel.add(telefoneField);
+        inputPanel.add(new JLabel("Email:"));
+        inputPanel.add(emailField);
+        inputPanel.add(addButton);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(listButton);
+        buttonPanel.add(searchButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+
+        // Adicionar componentes ao frame
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(new JScrollPane(displayArea), BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    // Implementação dos listeners
+    private class AddButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String nome = nomeField.getText();
+            String telefone = telefoneField.getText();
+            String email = emailField.getText();
+            Contato contato = new Contato(nome, telefone, email);
+            agenda.adicionarContato(contato);
+            displayArea.setText("Contato adicionado com sucesso!");
+        }
+    }
+
+    private class ListButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            StringBuilder sb = new StringBuilder();
+            for (Contato contato : agenda.listarContatos()) {
+                sb.append(contato).append("\n");
+            }
+            displayArea.setText(sb.toString());
+        }
+    }
+
+    private class SearchButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String nome = nomeField.getText();
+            Contato contato = agenda.buscarContato(nome).orElse(null);
+            if (contato != null) {
+                displayArea.setText(contato.toString());
+            } else {
+                displayArea.setText("Contato não encontrado.");
+            }
+        }
+    }
+
+    private class UpdateButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String nome = nomeField.getText();
+            String novoNome = nomeField.getText();
+            String novoTelefone = telefoneField.getText();
+            String novoEmail = emailField.getText();
+            Contato contatoAtualizado = new Contato(novoNome, novoTelefone, novoEmail);
+            boolean atualizado = agenda.atualizarContato(nome, contatoAtualizado);
+            if (atualizado) {
+                displayArea.setText("Contato atualizado com sucesso!");
+            } else {
+                displayArea.setText("Contato não encontrado.");
+            }
+        }
+    }
+
+    private class DeleteButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String nome = nomeField.getText();
+            boolean removido = agenda.removerContato(nome);
+            if (removido) {
+                displayArea.setText("Contato removido com sucesso!");
+            } else {
+                displayArea.setText("Contato não encontrado.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new AgendaSwingApp();
+            }
+        });
+    }
+}
